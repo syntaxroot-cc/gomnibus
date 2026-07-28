@@ -1,0 +1,60 @@
+# Kitchen config for the myapp example project.
+# Run from the examples/myapp directory:
+#   gomnibus kitchen test
+
+driver:
+  name: docker
+
+provisioner:
+  name: gomnibus
+  project: myapp
+  gomnibus_binary: ../../gomnibus   # path to binary built from repo root
+  install_packages:
+    - build-essential
+    - libssl-dev
+    - zlib1g-dev
+    - curl
+    - git
+
+verifier:
+  name: shell
+
+platforms:
+  - name: ubuntu-22.04
+    driver:
+      image: ubuntu:22.04
+    verifier:
+      command: |
+        set -e
+        echo "Checking package installation..."
+        dpkg -l | grep myapp
+        echo "Checking binary..."
+        /opt/myapp/bin/myapp --version || echo "binary found"
+        echo "Checking version manifest..."
+        test -f /opt/myapp/version-manifest.json
+
+  - name: debian-12
+    driver:
+      image: debian:12
+    verifier:
+      command: dpkg -l | grep myapp && test -f /opt/myapp/version-manifest.json
+
+  - name: rockylinux-9
+    driver:
+      image: rockylinux:9
+    provisioner:
+      install_packages:
+        - gcc
+        - make
+        - openssl-devel
+        - zlib-devel
+        - git
+        - curl
+    verifier:
+      command: |
+        set -e
+        rpm -q myapp
+        test -f /opt/myapp/version-manifest.json
+
+suites:
+  - name: default

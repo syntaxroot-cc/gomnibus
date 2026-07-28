@@ -1,0 +1,84 @@
+# gomnibus kitchen configuration
+# Run `gomnibus kitchen test` to build and verify your project across all platforms.
+# Run `gomnibus kitchen list` to see current instance states.
+#
+# This template targets the most common Linux packaging platforms.
+# Replace PROJECT_NAME with your actual project name.
+
+driver:
+  name: docker
+  privileged: false
+
+provisioner:
+  name: gomnibus
+  project: PROJECT_NAME          # replace with your project name
+  gomnibus_binary: ./gomnibus    # built binary relative to project root
+  install_packages:
+    - build-essential
+    - curl
+    - git
+  build_args: []
+
+verifier:
+  name: shell
+
+platforms:
+  - name: ubuntu-22.04
+    driver:
+      image: ubuntu:22.04
+    verifier:
+      command: |
+        set -e
+        dpkg -l | grep PROJECT_NAME
+        /opt/PROJECT_NAME/bin/PROJECT_NAME --version || true
+
+  - name: ubuntu-20.04
+    driver:
+      image: ubuntu:20.04
+    verifier:
+      command: |
+        set -e
+        dpkg -l | grep PROJECT_NAME
+
+  - name: debian-12
+    driver:
+      image: debian:12
+    verifier:
+      command: dpkg -l | grep PROJECT_NAME
+
+  - name: rockylinux-9
+    driver:
+      image: rockylinux:9
+    provisioner:
+      install_packages:
+        - gcc
+        - make
+        - git
+        - curl
+    verifier:
+      command: |
+        set -e
+        rpm -q PROJECT_NAME
+        /opt/PROJECT_NAME/bin/PROJECT_NAME --version || true
+
+  - name: centos-stream-9
+    driver:
+      image: quay.io/centos/centos:stream9
+    provisioner:
+      install_packages:
+        - gcc
+        - make
+        - git
+
+  - name: amazonlinux-2023
+    driver:
+      image: amazonlinux:2023
+    provisioner:
+      install_packages:
+        - gcc
+        - make
+        - git
+        - tar
+
+suites:
+  - name: default

@@ -93,4 +93,4 @@ examples/
 | .msi packaging (Windows)   | packager/msi (WiX v3/v4, auto-detect)| ✓ done    |
 | Changelog generation       | —                                     | planned   |
 | Parallel builds            | pipeline.Run (ready-queue, errgroup)  | ✓ done    |
-| Test Kitchen integration   | —                                     | planned   |
+| Test Kitchen integration   | internal/kitchen + kitchen subcommand | ✓ done    |
