@@ -10,6 +10,7 @@ provisioner:
   project: myapp
   gomnibus_binary: ../../gomnibus   # path to binary built from repo root
   install_packages:
+    - ca-certificates
     - build-essential
     - libssl-dev
     - zlib1g-dev
@@ -44,6 +45,7 @@ platforms:
       image: rockylinux:9
     provisioner:
       install_packages:
+        - ca-certificates
         - gcc
         - make
         - openssl-devel
