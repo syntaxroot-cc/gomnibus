@@ -22,6 +22,8 @@ import (
 	"github.com/syntaxroot-cc/gomnibus/internal/manifest"
 	"github.com/syntaxroot-cc/gomnibus/internal/packager"
 	_ "github.com/syntaxroot-cc/gomnibus/internal/packager/deb"
+	_ "github.com/syntaxroot-cc/gomnibus/internal/packager/msi"
+	_ "github.com/syntaxroot-cc/gomnibus/internal/packager/pkg"
 	_ "github.com/syntaxroot-cc/gomnibus/internal/packager/rpm"
 	_ "github.com/syntaxroot-cc/gomnibus/internal/packager/tar"
 	"github.com/syntaxroot-cc/gomnibus/internal/pipeline"

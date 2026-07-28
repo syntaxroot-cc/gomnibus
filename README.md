@@ -167,8 +167,8 @@ Flags:
 | Version manifest           | ✓                        | ✓                              |
 | License collection         | ✓                        | ✓                              |
 | .deb / .rpm packaging      | ✓                        | ✓                              |
-| .pkg (macOS)               | ✓                        | planned                        |
-| .msi (Windows)             | ✓                        | planned                        |
+| .pkg (macOS)               | ✓                        | ✓ (pkgbuild + productbuild)    |
+| .msi (Windows)             | ✓                        | ✓ (WiX v3/v4, auto-detected)  |
 | S3 caching                 | ✓                        | planned                        |
 | Parallel builds            | limited                  | planned                        |
 | Test Kitchen integration   | ✓                        | planned                        |

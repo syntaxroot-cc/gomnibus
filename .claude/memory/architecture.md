@@ -89,8 +89,8 @@ examples/
 | .deb packaging             | packager/deb                          | ✓ done    |
 | .rpm packaging             | packager/rpm                          | ✓ done    |
 | .tar.gz packaging          | packager/tar                          | ✓ done    |
-| .pkg packaging (macOS)     | packager/pkg                          | stub      |
-| .msi packaging (Windows)   | packager/msi                          | stub      |
+| .pkg packaging (macOS)     | packager/pkg (pkgbuild+productbuild)  | ✓ done    |
+| .msi packaging (Windows)   | packager/msi (WiX v3/v4, auto-detect)| ✓ done    |
 | Changelog generation       | —                                     | planned   |
 | Parallel builds            | pipeline (level-based)                | planned   |
 | Test Kitchen integration   | —                                     | planned   |
