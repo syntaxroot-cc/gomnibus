@@ -5,7 +5,9 @@ package packager
 import (
 	"context"
 	"fmt"
+	"os"
 	"runtime"
+	"strings"
 
 	"github.com/syntaxroot-cc/gomnibus/internal/project"
 )
@@ -35,13 +37,22 @@ func For(typ string) (Packager, error) {
 }
 
 // DefaultForPlatform returns the appropriate default packager for the current OS.
+// On Linux it reads /etc/os-release to distinguish debian-based from rpm-based
+// distributions instead of assuming all Linux systems use deb.
 func DefaultForPlatform() (Packager, error) {
 	switch runtime.GOOS {
 	case "linux":
-		if p, ok := registry["deb"]; ok {
+		data, _ := os.ReadFile("/etc/os-release")
+		content := strings.ToLower(string(data))
+		if strings.Contains(content, "debian") || strings.Contains(content, "ubuntu") {
+			if p, ok := registry["deb"]; ok {
+				return p, nil
+			}
+		}
+		if p, ok := registry["rpm"]; ok {
 			return p, nil
 		}
-		return For("rpm")
+		return For("tar")
 	case "darwin":
 		return For("pkg")
 	case "windows":

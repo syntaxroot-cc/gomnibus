@@ -234,7 +234,14 @@ func runBuild(cmd *cobra.Command, args []string) error {
 		}
 	}
 	if len(proj.Packages) == 0 {
-		p, err := packager.DefaultForPlatform()
+		var p packager.Packager
+		var err error
+		if packType != "" {
+			p, err = packager.For(packType)
+		}
+		if p == nil {
+			p, err = packager.DefaultForPlatform()
+		}
 		if err != nil {
 			return err
 		}

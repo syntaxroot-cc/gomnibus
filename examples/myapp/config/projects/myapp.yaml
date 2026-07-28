@@ -15,11 +15,6 @@ overrides:
   - name: openssl
     version: "3.3.1"
 
-packages:
-  - type: deb
-  - type: rpm
-  - type: tar
-
 compress:
   type: xz
   level: 9
