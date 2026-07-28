@@ -30,7 +30,7 @@ func Key(name, version, defPath string) (string, error) {
 	fmt.Fprintf(h, "%s:%s:", name, version)
 	if f, err := os.Open(defPath); err == nil {
 		defer f.Close()
-		io.Copy(h, f)
+		_, _ = io.Copy(h, f)
 	}
 	return fmt.Sprintf("%x", h.Sum(nil))[:16], nil
 }
@@ -69,6 +69,6 @@ func (c *LocalCache) tarPath(key string) string {
 // NopCache is a no-op cache used when caching is disabled.
 type NopCache struct{}
 
-func (n *NopCache) Has(_ context.Context, _ string) (bool, error)         { return false, nil }
-func (n *NopCache) Restore(_ context.Context, _, _ string) error          { return nil }
-func (n *NopCache) Store(_ context.Context, _, _ string) error            { return nil }
+func (n *NopCache) Has(_ context.Context, _ string) (bool, error) { return false, nil }
+func (n *NopCache) Restore(_ context.Context, _, _ string) error  { return nil }
+func (n *NopCache) Store(_ context.Context, _, _ string) error    { return nil }

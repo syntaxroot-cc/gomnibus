@@ -20,14 +20,14 @@ import (
 
 // S3Options configures an S3Cache.
 type S3Options struct {
-	Bucket      string
-	Region      string
-	Prefix      string // key prefix, e.g. "gomnibus/cache"
-	AccessKey   string
-	SecretKey   string
-	Profile     string
-	IAMRoleARN  string
-	Log         *zap.Logger
+	Bucket     string
+	Region     string
+	Prefix     string // key prefix, e.g. "gomnibus/cache"
+	AccessKey  string
+	SecretKey  string
+	Profile    string
+	IAMRoleARN string
+	Log        *zap.Logger
 }
 
 // S3Cache stores build artefacts in an S3 bucket as gzipped tarballs.

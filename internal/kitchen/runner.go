@@ -282,7 +282,7 @@ func buildInstallCmd(platformName string, packages []string) string {
 		return "DEBIAN_FRONTEND=noninteractive apt-get update -q && apt-get install -y --no-install-recommends " + pkgList
 	case strings.Contains(name, "centos") || strings.Contains(name, "rocky") ||
 		strings.Contains(name, "alma") || strings.Contains(name, "rhel"):
-		return "dnf install -y " + pkgList
+		return "dnf install -y --allowerasing " + pkgList
 	case strings.Contains(name, "amazon") || strings.Contains(name, "amazonlinux"):
 		return "yum install -y " + pkgList
 	case strings.Contains(name, "fedora"):

@@ -129,12 +129,12 @@ func buildWiX3(ctx context.Context, stagingDir, wxsPath, outPath string) error {
 
 // fileEntry describes a single file in the install root.
 type fileEntry struct {
-	ID          string // WiX-safe identifier
-	GUID        string // deterministic component GUID
-	Source      string // absolute path on disk
-	RelDir      string // directory path relative to install root
-	FileName    string
-	DirID       string // WiX Directory Id for this file's containing dir
+	ID       string // WiX-safe identifier
+	GUID     string // deterministic component GUID
+	Source   string // absolute path on disk
+	RelDir   string // directory path relative to install root
+	FileName string
+	DirID    string // WiX Directory Id for this file's containing dir
 }
 
 // dirEntry tracks a directory node in the WXS tree.
@@ -204,17 +204,17 @@ func deterministicGUID(rel string) string {
 // ── WXS template ────────────────────────────────────────────────────────────
 
 type wxsData struct {
-	ProductName    string
-	Manufacturer   string
-	Version        string
-	UpgradeCode    string
-	ProductID      string
-	InstallDir     string
-	InstallDirID   string
-	Description    string
-	Homepage       string
-	Files          []fileEntry
-	Dirs           []dirEntry
+	ProductName  string
+	Manufacturer string
+	Version      string
+	UpgradeCode  string
+	ProductID    string
+	InstallDir   string
+	InstallDirID string
+	Description  string
+	Homepage     string
+	Files        []fileEntry
+	Dirs         []dirEntry
 }
 
 func writeWXS(path string, proj *project.Definition, installDir string, files []fileEntry) error {

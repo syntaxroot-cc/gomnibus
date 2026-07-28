@@ -38,14 +38,16 @@ func TestSpecTemplate_NameVersionRelease(t *testing.T) {
 
 func TestSpecTemplate_SummaryAndDescription(t *testing.T) {
 	var buf bytes.Buffer
-	specTemplate.Execute(&buf, specData{
+	if err := specTemplate.Execute(&buf, specData{
 		Project: &project.Definition{
 			Name:        "pkg",
 			Description: "Unique description text",
 			InstallDir:  "/opt/pkg",
 		},
 		InstallDir: "/tmp/install",
-	})
+	}); err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
 	out := buf.String()
 	if strings.Count(out, "Unique description text") < 2 {
 		t.Errorf("Description should appear in Summary: and %%description; got:\n%s", out)
@@ -54,7 +56,7 @@ func TestSpecTemplate_SummaryAndDescription(t *testing.T) {
 
 func TestSpecTemplate_LicenseAndURL(t *testing.T) {
 	var buf bytes.Buffer
-	specTemplate.Execute(&buf, specData{
+	if err := specTemplate.Execute(&buf, specData{
 		Project: &project.Definition{
 			Name:       "pkg",
 			License:    "Apache-2.0",
@@ -62,7 +64,9 @@ func TestSpecTemplate_LicenseAndURL(t *testing.T) {
 			InstallDir: "/opt/pkg",
 		},
 		InstallDir: "/tmp/install",
-	})
+	}); err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
 	out := buf.String()
 	if !strings.Contains(out, "Apache-2.0") {
 		t.Errorf("License not in spec:\n%s", out)
@@ -74,10 +78,12 @@ func TestSpecTemplate_LicenseAndURL(t *testing.T) {
 
 func TestSpecTemplate_InstallSection_ReferencesInstallDir(t *testing.T) {
 	var buf bytes.Buffer
-	specTemplate.Execute(&buf, specData{
+	if err := specTemplate.Execute(&buf, specData{
 		Project:    &project.Definition{Name: "pkg", InstallDir: "/opt/pkg"},
 		InstallDir: "/custom/install/root",
-	})
+	}); err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
 	out := buf.String()
 	installIdx := strings.Index(out, "%install")
 	if installIdx == -1 {
@@ -91,10 +97,12 @@ func TestSpecTemplate_InstallSection_ReferencesInstallDir(t *testing.T) {
 
 func TestSpecTemplate_FilesSection_ListsProjectInstallDir(t *testing.T) {
 	var buf bytes.Buffer
-	specTemplate.Execute(&buf, specData{
+	if err := specTemplate.Execute(&buf, specData{
 		Project:    &project.Definition{Name: "pkg", InstallDir: "/opt/specialapp"},
 		InstallDir: "/tmp/install",
-	})
+	}); err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
 	out := buf.String()
 	filesIdx := strings.Index(out, "%files")
 	if filesIdx == -1 {
@@ -108,10 +116,12 @@ func TestSpecTemplate_FilesSection_ListsProjectInstallDir(t *testing.T) {
 
 func TestSpecTemplate_ChangelogSection_Present(t *testing.T) {
 	var buf bytes.Buffer
-	specTemplate.Execute(&buf, specData{
+	if err := specTemplate.Execute(&buf, specData{
 		Project:    &project.Definition{Name: "pkg", InstallDir: "/opt/pkg"},
 		InstallDir: "/tmp/install",
-	})
+	}); err != nil {
+		t.Fatalf("Execute: %v", err)
+	}
 	if !strings.Contains(buf.String(), "%changelog") {
 		t.Error("spec output is missing a changelog section")
 	}
@@ -209,10 +219,10 @@ func TestPack_Integration_CreatesOutputDir(t *testing.T) {
 
 	outputDir := filepath.Join(t.TempDir(), "new", "rpm", "output")
 	proj := &project.Definition{
-		Name:       "tool",
+		Name:         "tool",
 		BuildVersion: "1.0.0",
-		License:    "MIT",
-		InstallDir: "/opt/tool",
+		License:      "MIT",
+		InstallDir:   "/opt/tool",
 	}
 
 	if _, err := (&RPMPackager{}).Pack(context.Background(), proj, installDir, outputDir); err != nil {

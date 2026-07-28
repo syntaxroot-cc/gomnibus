@@ -27,6 +27,7 @@ jobs:
         run: go vet ./...
 
       - name: go test
+        shell: bash
         run: go test -race -count=1 -coverprofile=coverage.out ./...
 
       - name: Upload coverage artifact

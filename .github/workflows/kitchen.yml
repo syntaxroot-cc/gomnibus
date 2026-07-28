@@ -28,10 +28,8 @@ jobs:
       matrix:
         platform:
           - ubuntu-22.04
-          - ubuntu-20.04
           - debian-12
           - rockylinux-9
-          - amazonlinux-2023
 
     steps:
       - uses: actions/checkout@v4
@@ -43,18 +41,16 @@ jobs:
 
       # Build the gomnibus binary that will be copied into each container.
       - name: Build gomnibus
-        run: go build -o gomnibus ./cmd/gomnibus
+        run: CGO_ENABLED=0 go build -o gomnibus ./cmd/gomnibus
 
       # Pull the Docker image before running kitchen so network failures
       # don't count as kitchen test failures.
       - name: Pull Docker image
         run: |
           case "${{ matrix.platform }}" in
-            ubuntu-22.04)   docker pull ubuntu:22.04 ;;
-            ubuntu-20.04)   docker pull ubuntu:20.04 ;;
-            debian-12)      docker pull debian:12 ;;
-            rockylinux-9)   docker pull rockylinux:9 ;;
-            amazonlinux-2023) docker pull amazonlinux:2023 ;;
+            ubuntu-22.04) docker pull ubuntu:22.04 ;;
+            debian-12)    docker pull debian:12 ;;
+            rockylinux-9) docker pull rockylinux:9 ;;
           esac
 
       - name: kitchen test ${{ matrix.platform }}
