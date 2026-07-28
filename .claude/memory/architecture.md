@@ -56,10 +56,11 @@ examples/
 
 | Command                        | Purpose                                  |
 |-------------------------------|------------------------------------------|
-| `gomnibus new PROJECT`         | Generate project skeleton                |
-| `gomnibus build PROJECT`       | Full build + package                     |
-| `gomnibus manifest PROJECT`    | Print JSON version manifest              |
-| `gomnibus validate PROJECT`    | Validate definitions without building    |
+| `gomnibus new PROJECT`             | Generate project skeleton                |
+| `gomnibus build PROJECT`           | Full build + package                     |
+| `gomnibus manifest PROJECT`        | Print JSON version manifest              |
+| `gomnibus validate PROJECT`        | Validate definitions without building    |
+| `gomnibus changelog generate`      | Generate CHANGELOG.md from git history   |
 
 ## Configuration precedence
 
@@ -91,6 +92,6 @@ examples/
 | .tar.gz packaging          | packager/tar                          | ✓ done    |
 | .pkg packaging (macOS)     | packager/pkg (pkgbuild+productbuild)  | ✓ done    |
 | .msi packaging (Windows)   | packager/msi (WiX v3/v4, auto-detect)| ✓ done    |
-| Changelog generation       | —                                     | planned   |
+| Changelog generation       | changelog.Parse + Render (conv. commits)| ✓ done   |
 | Parallel builds            | pipeline.Run (ready-queue, errgroup)  | ✓ done    |
 | Test Kitchen integration   | internal/kitchen + kitchen subcommand | ✓ done    |
