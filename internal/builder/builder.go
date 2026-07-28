@@ -44,23 +44,23 @@ func runStep(ctx context.Context, step software.BuildStep, bc *Context) error {
 
 	switch {
 	case step.Command != "":
-		return runShell(ctx, step.Command, workDir, env)
+		return runShell(ctx, expandVars(step.Command, bc), workDir, env)
 
-	case len(step.Make) > 0:
+	case step.Make != nil:
 		return runCmd(ctx, workDir, env, "make", step.Make...)
 
-	case len(step.CMake) > 0:
+	case step.CMake != nil:
 		args := append([]string{"-DCMAKE_INSTALL_PREFIX=" + bc.InstallDir}, step.CMake...)
 		return runCmd(ctx, workDir, env, "cmake", args...)
 
-	case len(step.Configure) > 0:
+	case step.Configure != nil:
 		args := append([]string{"--prefix=" + bc.InstallDir}, step.Configure...)
 		return runCmd(ctx, workDir, env, "./configure", args...)
 
-	case len(step.Go) > 0:
+	case step.Go != nil:
 		return runCmd(ctx, workDir, env, "go", step.Go...)
 
-	case len(step.Gem) > 0:
+	case step.Gem != nil:
 		return runCmd(ctx, workDir, env, "gem", step.Gem...)
 
 	case step.Mkdir != "":
@@ -116,13 +116,18 @@ func mergeEnv(base []string, extra map[string]string) []string {
 }
 
 func expandPath(p string, bc *Context) string {
-	p = strings.ReplaceAll(p, "${install_dir}", bc.InstallDir)
-	p = strings.ReplaceAll(p, "${src_dir}", bc.SrcDir)
-	p = strings.ReplaceAll(p, "${build_dir}", bc.BuildDir)
+	p = expandVars(p, bc)
 	if !path.IsAbs(p) && !filepath.IsAbs(p) {
 		p = path.Join(bc.SrcDir, p)
 	}
 	return p
+}
+
+func expandVars(s string, bc *Context) string {
+	s = strings.ReplaceAll(s, "${install_dir}", bc.InstallDir)
+	s = strings.ReplaceAll(s, "${src_dir}", bc.SrcDir)
+	s = strings.ReplaceAll(s, "${build_dir}", bc.BuildDir)
+	return s
 }
 
 func copyFile(src, dst string) error {

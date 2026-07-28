@@ -171,6 +171,7 @@ func runBuild(cmd *cobra.Command, args []string) error {
 			SrcDir:     srcDir,
 			BuildDir:   fmt.Sprintf("%s/build/%s", cfg.BaseDir, def.Name),
 			InstallDir: installDir,
+			Env:        os.Environ(),
 			Log:        logger,
 		}
 		if err := builder.Execute(ctx, def, bc); err != nil {

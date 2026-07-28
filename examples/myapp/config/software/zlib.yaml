@@ -9,8 +9,7 @@ source:
 relative_path: "zlib-1.3.1"
 
 build:
-  - configure:
-      - "--prefix=${install_dir}"
+  - configure: []
   - make: []
   - make:
       - install
