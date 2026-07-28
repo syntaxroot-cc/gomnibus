@@ -27,7 +27,7 @@ type State struct {
 	Driver      string        `json:"driver"`
 	State       InstanceState `json:"state"`
 	ContainerID string        `json:"container_id,omitempty"` // Docker
-	VMDir       string        `json:"vm_dir,omitempty"`        // Vagrant
+	VMDir       string        `json:"vm_dir,omitempty"`       // Vagrant
 	Hostname    string        `json:"hostname,omitempty"`
 	Port        int           `json:"port,omitempty"`
 	LastAction  string        `json:"last_action,omitempty"`

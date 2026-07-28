@@ -37,27 +37,27 @@ type ExtraPackageFile struct {
 
 // Definition is the Go equivalent of a Ruby Omnibus project DSL file.
 type Definition struct {
-	Name              string            `yaml:"name"`
-	FriendlyName      string            `yaml:"friendly_name,omitempty"`
-	Maintainer        string            `yaml:"maintainer"`
-	Homepage          string            `yaml:"homepage,omitempty"`
-	Description       string            `yaml:"description,omitempty"`
-	InstallDir        string            `yaml:"install_dir"`
-	BuildVersion      string            `yaml:"build_version"`
-	BuildIteration    int               `yaml:"build_iteration"`
-	Dependencies      []string          `yaml:"dependencies"`
-	Overrides         []Override        `yaml:"overrides,omitempty"`
-	Packages          []PackageConfig   `yaml:"packages,omitempty"`
-	Compress          *CompressConfig   `yaml:"compress,omitempty"`
+	Name              string             `yaml:"name"`
+	FriendlyName      string             `yaml:"friendly_name,omitempty"`
+	Maintainer        string             `yaml:"maintainer"`
+	Homepage          string             `yaml:"homepage,omitempty"`
+	Description       string             `yaml:"description,omitempty"`
+	InstallDir        string             `yaml:"install_dir"`
+	BuildVersion      string             `yaml:"build_version"`
+	BuildIteration    int                `yaml:"build_iteration"`
+	Dependencies      []string           `yaml:"dependencies"`
+	Overrides         []Override         `yaml:"overrides,omitempty"`
+	Packages          []PackageConfig    `yaml:"packages,omitempty"`
+	Compress          *CompressConfig    `yaml:"compress,omitempty"`
 	ExtraPackageFiles []ExtraPackageFile `yaml:"extra_package_files,omitempty"`
-	RuntimeDeps       []string          `yaml:"runtime_dependencies,omitempty"`
-	ConflictsWith     []string          `yaml:"conflicts,omitempty"`
-	Replaces          []string          `yaml:"replaces,omitempty"`
-	Env               map[string]string `yaml:"env,omitempty"`
-	ExcludeFiles      []string          `yaml:"exclude_files,omitempty"`
-	IncludeFiles      []string          `yaml:"include_files,omitempty"`
-	License           string            `yaml:"license,omitempty"`
-	LicenseFile       string            `yaml:"license_file,omitempty"`
+	RuntimeDeps       []string           `yaml:"runtime_dependencies,omitempty"`
+	ConflictsWith     []string           `yaml:"conflicts,omitempty"`
+	Replaces          []string           `yaml:"replaces,omitempty"`
+	Env               map[string]string  `yaml:"env,omitempty"`
+	ExcludeFiles      []string           `yaml:"exclude_files,omitempty"`
+	IncludeFiles      []string           `yaml:"include_files,omitempty"`
+	License           string             `yaml:"license,omitempty"`
+	LicenseFile       string             `yaml:"license_file,omitempty"`
 }
 
 // OverrideMap returns overrides keyed by software name for fast lookup.

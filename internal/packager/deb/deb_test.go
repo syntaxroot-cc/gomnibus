@@ -96,10 +96,10 @@ func TestBuildControl_EmptyOptionals_Absent(t *testing.T) {
 
 func TestBuildControl_MultipleRuntimeDeps_Joined(t *testing.T) {
 	proj := &project.Definition{
-		Name:        "myapp",
+		Name:         "myapp",
 		BuildVersion: "1.0.0",
-		Maintainer:  "Test",
-		RuntimeDeps: []string{"dep1", "dep2", "dep3"},
+		Maintainer:   "Test",
+		RuntimeDeps:  []string{"dep1", "dep2", "dep3"},
 	}
 	ctrl := buildControl(proj, "amd64")
 	if !lineExists(ctrl, "Depends: dep1, dep2, dep3") {
@@ -244,10 +244,10 @@ func TestPack_Integration_CreatesOutputDir(t *testing.T) {
 
 	outputDir := filepath.Join(t.TempDir(), "new", "output")
 	proj := &project.Definition{
-		Name:       "app",
+		Name:         "app",
 		BuildVersion: "1.0.0",
-		Maintainer: "Test",
-		InstallDir: "/opt/app",
+		Maintainer:   "Test",
+		InstallDir:   "/opt/app",
 	}
 
 	if _, err := (&DebPackager{}).Pack(context.Background(), proj, installDir, outputDir); err != nil {

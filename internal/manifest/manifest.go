@@ -14,9 +14,9 @@ import (
 
 // Entry represents one resolved software component.
 type Entry struct {
-	Name     string `json:"name"`
-	Version  string `json:"version"`
-	Source   string `json:"source,omitempty"`
+	Name      string `json:"name"`
+	Version   string `json:"version"`
+	Source    string `json:"source,omitempty"`
 	LicenseID string `json:"license,omitempty"`
 }
 

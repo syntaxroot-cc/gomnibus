@@ -36,11 +36,11 @@ func buildTestGraph(nodes map[string][]string) *Graph {
 
 // TestLevels verifies that assignLevels produces correct depths for a diamond DAG.
 //
-//	   D
-//	  / \
-//	 B   C
-//	  \ /
-//	   A
+//	  D
+//	 / \
+//	B   C
+//	 \ /
+//	  A
 func TestLevels(t *testing.T) {
 	g := buildTestGraph(map[string][]string{
 		"A": {},

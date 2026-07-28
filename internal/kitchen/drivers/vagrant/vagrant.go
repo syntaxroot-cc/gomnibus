@@ -38,11 +38,11 @@ func (v *VagrantDriver) Create(ctx context.Context, inst kitchen.InstanceConfig,
 		return err
 	}
 	err = vagrantfileTemplate.Execute(vf, vagrantfileData{
-		Box:       inst.Driver.Box,
-		Memory:    inst.Driver.Memory,
-		CPUs:      inst.Driver.CPUs,
-		EnvVars:   inst.Driver.EnvVars,
-		Volumes:   inst.Driver.Volumes,
+		Box:     inst.Driver.Box,
+		Memory:  inst.Driver.Memory,
+		CPUs:    inst.Driver.CPUs,
+		EnvVars: inst.Driver.EnvVars,
+		Volumes: inst.Driver.Volumes,
 	})
 	vf.Close()
 	if err != nil {

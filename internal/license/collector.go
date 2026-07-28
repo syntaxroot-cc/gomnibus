@@ -12,11 +12,11 @@ import (
 
 // Entry records license information for one component.
 type Entry struct {
-	Name      string `json:"name"`
-	Version   string `json:"version"`
-	LicenseID string `json:"license_id,omitempty"`
+	Name        string `json:"name"`
+	Version     string `json:"version"`
+	LicenseID   string `json:"license_id,omitempty"`
 	LicenseFile string `json:"license_file,omitempty"`
-	Content   string `json:"content,omitempty"`
+	Content     string `json:"content,omitempty"`
 }
 
 // Collect gathers license metadata from all nodes in the build graph.

@@ -13,15 +13,15 @@ import (
 
 // Node wraps a software definition with resolved dependency edges.
 type Node struct {
-	Def    *software.Definition
-	Deps   []*Node
-	Level  int // topological depth, used for parallel scheduling
+	Def   *software.Definition
+	Deps  []*Node
+	Level int // topological depth, used for parallel scheduling
 }
 
 // Graph is an ordered, dependency-aware build graph.
 type Graph struct {
-	nodes  map[string]*Node
-	order  []*Node
+	nodes map[string]*Node
+	order []*Node
 }
 
 // Build constructs a Graph for the given software names, resolving dependencies

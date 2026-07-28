@@ -10,17 +10,17 @@ import (
 
 // Source describes where and how to fetch a software component.
 type Source struct {
-	URL      string `yaml:"url"`
-	Git      string `yaml:"git"`
-	Path     string `yaml:"path"`
-	MD5      string `yaml:"md5"`
-	SHA1     string `yaml:"sha1"`
-	SHA256   string `yaml:"sha256"`
-	SHA512   string `yaml:"sha512"`
-	Branch   string `yaml:"branch"`
-	Tag      string `yaml:"tag"`
-	Commit   string `yaml:"commit"`
-	Subdir   string `yaml:"subdir"`
+	URL         string `yaml:"url"`
+	Git         string `yaml:"git"`
+	Path        string `yaml:"path"`
+	MD5         string `yaml:"md5"`
+	SHA1        string `yaml:"sha1"`
+	SHA256      string `yaml:"sha256"`
+	SHA512      string `yaml:"sha512"`
+	Branch      string `yaml:"branch"`
+	Tag         string `yaml:"tag"`
+	Commit      string `yaml:"commit"`
+	Subdir      string `yaml:"subdir"`
 	S3Bucket    string `yaml:"s3_bucket"`
 	S3Key       string `yaml:"s3_key"`
 	S3Region    string `yaml:"s3_region"`
@@ -31,20 +31,20 @@ type Source struct {
 
 // BuildStep is a single instruction in the build block.
 type BuildStep struct {
-	Command    string            `yaml:"command,omitempty"`
-	Make       []string          `yaml:"make,omitempty"`
-	CMake      []string          `yaml:"cmake,omitempty"`
-	Configure  []string          `yaml:"configure,omitempty"`
-	Gem        []string          `yaml:"gem,omitempty"`
-	Go         []string          `yaml:"go,omitempty"`
-	Mkdir      string            `yaml:"mkdir,omitempty"`
-	Copy       *CopySpec         `yaml:"copy,omitempty"`
-	Move       *MoveSpec         `yaml:"move,omitempty"`
-	Link       *LinkSpec         `yaml:"link,omitempty"`
-	Delete     string            `yaml:"delete,omitempty"`
-	Patch      *PatchSpec        `yaml:"patch,omitempty"`
-	Env        map[string]string `yaml:"env,omitempty"`
-	WorkDir    string            `yaml:"work_dir,omitempty"`
+	Command   string            `yaml:"command,omitempty"`
+	Make      []string          `yaml:"make,omitempty"`
+	CMake     []string          `yaml:"cmake,omitempty"`
+	Configure []string          `yaml:"configure,omitempty"`
+	Gem       []string          `yaml:"gem,omitempty"`
+	Go        []string          `yaml:"go,omitempty"`
+	Mkdir     string            `yaml:"mkdir,omitempty"`
+	Copy      *CopySpec         `yaml:"copy,omitempty"`
+	Move      *MoveSpec         `yaml:"move,omitempty"`
+	Link      *LinkSpec         `yaml:"link,omitempty"`
+	Delete    string            `yaml:"delete,omitempty"`
+	Patch     *PatchSpec        `yaml:"patch,omitempty"`
+	Env       map[string]string `yaml:"env,omitempty"`
+	WorkDir   string            `yaml:"work_dir,omitempty"`
 }
 
 type CopySpec struct {

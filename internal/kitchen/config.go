@@ -25,11 +25,11 @@ type Config struct {
 
 // DriverConfig describes how a platform is created and managed.
 type DriverConfig struct {
-	Name       string            `yaml:"name"`   // docker | vagrant
-	Image      string            `yaml:"image"`  // Docker image (docker driver)
-	Box        string            `yaml:"box"`    // Vagrant box
+	Name       string            `yaml:"name"`        // docker | vagrant
+	Image      string            `yaml:"image"`       // Docker image (docker driver)
+	Box        string            `yaml:"box"`         // Vagrant box
 	RunCommand string            `yaml:"run_command"` // override container entrypoint
-	Memory     string            `yaml:"memory"` // e.g. "2g"
+	Memory     string            `yaml:"memory"`      // e.g. "2g"
 	CPUs       int               `yaml:"cpus"`
 	Volumes    []string          `yaml:"volumes"`
 	EnvVars    map[string]string `yaml:"env"`
@@ -40,9 +40,9 @@ type DriverConfig struct {
 
 // ProvisionerConfig describes how the gomnibus build runs inside the platform.
 type ProvisionerConfig struct {
-	Name            string   `yaml:"name"`    // always "gomnibus"
-	Project         string   `yaml:"project"` // project name to build
-	GomnibusBinary  string   `yaml:"gomnibus_binary"` // path on host; copied in
+	Name            string   `yaml:"name"`             // always "gomnibus"
+	Project         string   `yaml:"project"`          // project name to build
+	GomnibusBinary  string   `yaml:"gomnibus_binary"`  // path on host; copied in
 	InstallPackages []string `yaml:"install_packages"` // pre-build apt/dnf installs
 	BuildArgs       []string `yaml:"build_args"`       // extra flags for gomnibus build
 	WorkDir         string   `yaml:"work_dir"`         // inside-container workspace
