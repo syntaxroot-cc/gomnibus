@@ -89,8 +89,9 @@ Name:           {{.Project.Name}}
 Version:        {{.Project.BuildVersion}}
 Release:        {{.Project.BuildIteration}}
 Summary:        {{if .Project.Description}}{{.Project.Description}}{{else}}{{.Project.Name}}{{end}}
-License:        {{.Project.License}}
-URL:            {{.Project.Homepage}}
+License:        {{if .Project.License}}{{.Project.License}}{{else}}Proprietary{{end}}
+{{if .Project.Homepage}}URL:            {{.Project.Homepage}}
+{{end -}}
 BuildArch:      x86_64
 
 %description
