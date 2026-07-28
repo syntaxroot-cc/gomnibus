@@ -52,7 +52,6 @@ func (n *NetFetcher) Fetch(ctx context.Context, src *software.Source, destDir st
 	if err != nil {
 		return err
 	}
-	defer f.Close()
 
 	var h hash.Hash
 	var expected string
@@ -71,8 +70,10 @@ func (n *NetFetcher) Fetch(ctx context.Context, src *software.Source, destDir st
 	if h != nil {
 		w = io.MultiWriter(f, h)
 	}
-	if _, err := io.Copy(w, resp.Body); err != nil {
-		return err
+	_, copyErr := io.Copy(w, resp.Body)
+	f.Close()
+	if copyErr != nil {
+		return copyErr
 	}
 
 	if h != nil {
