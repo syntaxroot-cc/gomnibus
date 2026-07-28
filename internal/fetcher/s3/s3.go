@@ -38,12 +38,15 @@ type S3Fetcher struct{}
 
 func (f *S3Fetcher) Name() string { return "s3" }
 
+// clientFactory creates an S3 client; replaced in tests to inject a fake server.
+var clientFactory = newClient
+
 func (f *S3Fetcher) Fetch(ctx context.Context, src *software.Source, destDir string) error {
 	if src.S3Bucket == "" || src.S3Key == "" {
 		return fmt.Errorf("s3 source requires both s3_bucket and s3_key")
 	}
 
-	client, err := newClient(ctx, src)
+	client, err := clientFactory(ctx, src)
 	if err != nil {
 		return fmt.Errorf("s3 client: %w", err)
 	}
