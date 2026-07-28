@@ -9,6 +9,7 @@ on:
       - 'cmd/**'
       - '.kitchen.yml'
       - 'examples/**/.kitchen.yml'
+      - 'examples/**/config/**'
   pull_request:
     branches: [main]
   workflow_dispatch:
