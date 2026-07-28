@@ -98,7 +98,8 @@ BuildArch:      x86_64
 {{.Project.Description}}
 
 %install
-cp -a {{.InstallDir}}/. %{buildroot}/
+mkdir -p %{buildroot}{{.InstallDir}}
+cp -a {{.InstallDir}}/. %{buildroot}{{.InstallDir}}/
 
 %files
 {{.Project.InstallDir}}
