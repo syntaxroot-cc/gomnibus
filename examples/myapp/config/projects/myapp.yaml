@@ -1,0 +1,30 @@
+name: myapp
+friendly_name: "My Application"
+maintainer: "Acme Corp <packages@acme.com>"
+homepage: "https://acme.com/myapp"
+description: "A self-contained installer for My Application, including all runtime dependencies."
+install_dir: /opt/myapp
+build_version: "2.1.0"
+build_iteration: 1
+dependencies:
+  - zlib
+  - openssl
+  - myapp
+
+overrides:
+  - name: openssl
+    version: "3.3.1"
+
+packages:
+  - type: deb
+  - type: rpm
+  - type: tar
+
+compress:
+  type: xz
+  level: 9
+
+runtime_dependencies:
+  - libc6 (>= 2.17)
+
+license: Apache-2.0
