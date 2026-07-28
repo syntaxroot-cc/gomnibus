@@ -76,9 +76,9 @@ examples/
 | Git fetcher                | fetcher/git                           | ✓ done    |
 | Net fetcher                | fetcher/net (HTTP + SHA checksums)    | ✓ done    |
 | Path fetcher               | fetcher/path                          | ✓ done    |
-| S3 fetcher/cache           | fetcher/s3 + cache/s3                 | stub      |
+| S3 fetcher                 | fetcher/s3 (AWS SDK v2, all auth modes)| ✓ done   |
 | Git caching                | cache.LocalCache (tar.gz)             | ✓ done    |
-| S3 caching                 | cache/s3                              | stub      |
+| S3 caching                 | cache.S3Cache + ChainCache            | ✓ done    |
 | Dep-ordered builds         | pipeline.Graph                        | ✓ done    |
 | Version overrides          | project.Definition.Overrides          | ✓ done    |
 | Version blocks             | software.Definition.Versions          | ✓ done    |

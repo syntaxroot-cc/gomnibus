@@ -17,6 +17,7 @@ import (
 	_ "github.com/syntaxroot-cc/gomnibus/internal/fetcher/git"
 	_ "github.com/syntaxroot-cc/gomnibus/internal/fetcher/net"
 	_ "github.com/syntaxroot-cc/gomnibus/internal/fetcher/path"
+	_ "github.com/syntaxroot-cc/gomnibus/internal/fetcher/s3"
 	"github.com/syntaxroot-cc/gomnibus/internal/health"
 	"github.com/syntaxroot-cc/gomnibus/internal/license"
 	"github.com/syntaxroot-cc/gomnibus/internal/manifest"
@@ -111,11 +112,9 @@ func runBuild(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	var buildCache cache.Cache
-	if cfg.UseGitCaching {
-		buildCache = &cache.LocalCache{Dir: cfg.CacheDir, Log: logger}
-	} else {
-		buildCache = &cache.NopCache{}
+	buildCache, err := buildCacheFromConfig(ctx, cfg, logger)
+	if err != nil {
+		return err
 	}
 
 	for _, node := range graph.Order() {
@@ -224,6 +223,48 @@ func runBuild(cmd *cobra.Command, args []string) error {
 
 	logger.Info("build complete", zap.String("project", projName))
 	return nil
+}
+
+// buildCacheFromConfig constructs the appropriate Cache implementation based on
+// the global configuration:
+//   - both local + S3 enabled → ChainCache (local-first, remote fallback)
+//   - S3 only                 → S3Cache
+//   - local only (default)    → LocalCache
+//   - neither                 → NopCache
+func buildCacheFromConfig(ctx context.Context, cfg *config.Config, log *zap.Logger) (cache.Cache, error) {
+	var local cache.Cache
+	if cfg.UseGitCaching {
+		local = &cache.LocalCache{Dir: cfg.CacheDir, Log: log}
+	}
+
+	var remote cache.Cache
+	if cfg.UseS3Caching {
+		s3c, err := cache.NewS3Cache(ctx, cache.S3Options{
+			Bucket:     cfg.S3Bucket,
+			Region:     cfg.S3Region,
+			Prefix:     cfg.S3Prefix,
+			AccessKey:  cfg.S3AccessKey,
+			SecretKey:  cfg.S3SecretKey,
+			Profile:    cfg.S3Profile,
+			IAMRoleARN: cfg.S3IAMRoleARN,
+			Log:        log,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("S3 cache: %w", err)
+		}
+		remote = s3c
+	}
+
+	switch {
+	case local != nil && remote != nil:
+		return cache.NewChainCache(local, remote, log), nil
+	case remote != nil:
+		return remote, nil
+	case local != nil:
+		return local, nil
+	default:
+		return &cache.NopCache{}, nil
+	}
 }
 
 // ── gomnibus manifest PROJECT ────────────────────────────────────────────────

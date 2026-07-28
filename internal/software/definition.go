@@ -21,8 +21,12 @@ type Source struct {
 	Tag      string `yaml:"tag"`
 	Commit   string `yaml:"commit"`
 	Subdir   string `yaml:"subdir"`
-	S3Bucket string `yaml:"s3_bucket"`
-	S3Key    string `yaml:"s3_key"`
+	S3Bucket    string `yaml:"s3_bucket"`
+	S3Key       string `yaml:"s3_key"`
+	S3Region    string `yaml:"s3_region"`
+	S3AccessKey string `yaml:"s3_access_key"`
+	S3SecretKey string `yaml:"s3_secret_key"`
+	S3Profile   string `yaml:"s3_profile"`
 }
 
 // BuildStep is a single instruction in the build block.

@@ -19,7 +19,7 @@ definitions.
 - **Multiple fetcher backends**: HTTP(S) with checksum verification, Git (branch/tag/commit), local path, S3
 - **All major build systems**: `./configure`, CMake, Make, Go, Gem, and arbitrary shell commands
 - **Dependency-ordered builds** via topological sort with cycle detection
-- **Build caching** (local content-addressable cache; S3 cache planned)
+- **Build caching**: local content-addressable cache, S3 remote cache, or both via `ChainCache` (local-first, remote fallback)
 - **Package formats**: `.deb` (dpkg-deb), `.rpm` (rpmbuild), `.tar.gz` universal; `.pkg` and `.msi` planned
 - **Shared-library health check** (`ldd`/`otool`) with per-software whitelist
 - **Version manifest** (JSON) for reproducible builds
