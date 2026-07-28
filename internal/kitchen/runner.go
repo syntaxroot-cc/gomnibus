@@ -300,8 +300,8 @@ func resolveBinary(name string) (string, error) {
 	if filepath.IsAbs(name) {
 		return name, nil
 	}
-	// Prefer a built binary in the current working directory.
-	if _, err := os.Stat(name); err == nil {
+	// Prefer a built binary in the current working directory (skip directories).
+	if info, err := os.Stat(name); err == nil && !info.IsDir() {
 		abs, _ := filepath.Abs(name)
 		return abs, nil
 	}

@@ -54,10 +54,10 @@ jobs:
           esac
 
       - name: kitchen test ${{ matrix.platform }}
+        working-directory: examples/myapp
         run: |
-          ./gomnibus kitchen test "${{ matrix.platform }}" \
-            --kitchen-config examples/myapp/.kitchen.yml \
-            --output pkg/kitchen \
+          ../../gomnibus kitchen test "${{ matrix.platform }}" \
+            --output ../../pkg/kitchen \
             --log-level info
         env:
           # Pass through any S3 cache credentials if configured.
@@ -67,10 +67,10 @@ jobs:
 
       # Always destroy the container, even if the build failed.
       - name: kitchen destroy ${{ matrix.platform }}
+        working-directory: examples/myapp
         if: always()
         run: |
-          ./gomnibus kitchen destroy "${{ matrix.platform }}" \
-            --kitchen-config examples/myapp/.kitchen.yml \
+          ../../gomnibus kitchen destroy "${{ matrix.platform }}" \
             --log-level warn || true
 
       - name: Upload packages
