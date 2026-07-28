@@ -49,9 +49,8 @@ func TestExpandPath_Absolute(t *testing.T) {
 func TestExpandPath_Relative(t *testing.T) {
 	bc := &Context{SrcDir: "/src", BuildDir: "/build", InstallDir: "/install"}
 	got := expandPath("relative/file", bc)
-	want := filepath.Join("/src", "relative/file")
-	if got != want {
-		t.Errorf("relative path: got %q, want %q", got, want)
+	if got != "/src/relative/file" {
+		t.Errorf("relative path: got %q, want /src/relative/file", got)
 	}
 }
 

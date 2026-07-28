@@ -69,7 +69,6 @@ func (f *S3Fetcher) Fetch(ctx context.Context, src *software.Source, destDir str
 	if err != nil {
 		return err
 	}
-	defer f2.Close()
 
 	var h hash.Hash
 	var expected string
@@ -88,9 +87,11 @@ func (f *S3Fetcher) Fetch(ctx context.Context, src *software.Source, destDir str
 	if h != nil {
 		w = io.MultiWriter(f2, h)
 	}
-	if _, err := io.Copy(w, out.Body); err != nil {
+	_, copyErr := io.Copy(w, out.Body)
+	f2.Close()
+	if copyErr != nil {
 		os.Remove(dest)
-		return fmt.Errorf("streaming s3://%s/%s: %w", src.S3Bucket, src.S3Key, err)
+		return fmt.Errorf("streaming s3://%s/%s: %w", src.S3Bucket, src.S3Key, copyErr)
 	}
 
 	if h != nil {

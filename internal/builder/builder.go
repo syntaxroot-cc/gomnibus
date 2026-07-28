@@ -119,7 +119,7 @@ func expandPath(p string, bc *Context) string {
 	p = strings.ReplaceAll(p, "${install_dir}", bc.InstallDir)
 	p = strings.ReplaceAll(p, "${src_dir}", bc.SrcDir)
 	p = strings.ReplaceAll(p, "${build_dir}", bc.BuildDir)
-	if !path.IsAbs(p) {
+	if !path.IsAbs(p) && !filepath.IsAbs(p) {
 		p = path.Join(bc.SrcDir, p)
 	}
 	return p
