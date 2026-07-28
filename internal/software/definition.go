@@ -69,9 +69,10 @@ type PatchSpec struct {
 
 // VersionBlock allows version-specific source and build overrides.
 type VersionBlock struct {
-	Version string      `yaml:"version"`
-	Source  *Source     `yaml:"source,omitempty"`
-	Build   []BuildStep `yaml:"build,omitempty"`
+	Version      string      `yaml:"version"`
+	Source       *Source     `yaml:"source,omitempty"`
+	Build        []BuildStep `yaml:"build,omitempty"`
+	RelativePath string      `yaml:"relative_path,omitempty"`
 }
 
 // Definition is the Go equivalent of a Ruby Omnibus software DSL file.
@@ -108,6 +109,9 @@ func (d *Definition) Resolve(override string) error {
 			}
 			if len(vb.Build) > 0 {
 				d.Build = vb.Build
+			}
+			if vb.RelativePath != "" {
+				d.RelativePath = vb.RelativePath
 			}
 			return nil
 		}

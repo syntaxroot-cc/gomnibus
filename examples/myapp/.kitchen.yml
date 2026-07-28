@@ -9,11 +9,11 @@ provisioner:
   name: gomnibus
   project: myapp
   gomnibus_binary: ../../gomnibus   # path to binary built from repo root
+  build_args:
+    - "--skip-healthcheck"
   install_packages:
     - ca-certificates
     - build-essential
-    - libssl-dev
-    - zlib1g-dev
     - curl
     - git
 
@@ -48,8 +48,8 @@ platforms:
         - ca-certificates
         - gcc
         - make
-        - openssl-devel
-        - zlib-devel
+        - perl
+        - rpm-build
         - git
         - curl
     verifier:

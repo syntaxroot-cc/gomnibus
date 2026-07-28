@@ -13,12 +13,13 @@ versions:
     source:
       url: "https://www.openssl.org/source/openssl-3.3.1.tar.gz"
       sha256: "777cd596284c883375a2a7a11bf5d2786fc5413255efab20c50d6ffe6d020b7e"
+    relative_path: "openssl-3.3.1"
 
 dependencies:
   - zlib
 
 build:
-  - command: "./Configure --prefix=${install_dir} --openssldir=${install_dir}/etc/ssl shared zlib"
+  - command: "./Configure --prefix=${install_dir} --openssldir=${install_dir}/etc/ssl shared zlib --with-zlib-include=${install_dir}/include --with-zlib-lib=${install_dir}/lib"
   - make: []
   - make:
       - install

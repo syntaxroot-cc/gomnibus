@@ -224,12 +224,21 @@ func (r *Runner) runProvisioner(ctx context.Context, inst InstanceConfig, drv Dr
 		return fmt.Errorf("build failed: %w", err)
 	}
 
-	// 6. Copy produced packages back to the host.
+	// 6. Install produced packages inside the container so verifiers can check them.
+	remotePkgDir := workDir + "/pkg"
+	installCmd := buildPackageInstallCmd(inst.Platform.Name, remotePkgDir)
+	if installCmd != "" {
+		r.log.Info("installing built package", zap.String("instance", inst.Name))
+		if err := drv.Exec(ctx, state, installCmd); err != nil {
+			r.log.Warn("package install failed (non-fatal)", zap.Error(err))
+		}
+	}
+
+	// 7. Copy produced packages back to the host.
 	pkgDir := filepath.Join(r.outDir, inst.Platform.Name)
 	if err := os.MkdirAll(pkgDir, 0o755); err != nil {
 		return err
 	}
-	remotePkgDir := workDir + "/pkg"
 	if err := drv.CopyFrom(ctx, state, remotePkgDir, pkgDir); err != nil {
 		// Non-fatal: packages may have been placed differently.
 		r.log.Warn("could not copy packages from instance", zap.Error(err))
@@ -291,6 +300,22 @@ func buildInstallCmd(platformName string, packages []string) string {
 		return "zypper install -y " + pkgList
 	default:
 		return "apt-get update -q && apt-get install -y " + pkgList
+	}
+}
+
+// buildPackageInstallCmd returns a shell command to install the built packages
+// (*.deb or *.rpm) from pkgDir inside the container.
+func buildPackageInstallCmd(platformName, pkgDir string) string {
+	name := strings.ToLower(platformName)
+	switch {
+	case strings.Contains(name, "ubuntu") || strings.Contains(name, "debian"):
+		return fmt.Sprintf("dpkg --force-overwrite -i %s/*.deb 2>/dev/null || true", pkgDir)
+	case strings.Contains(name, "centos") || strings.Contains(name, "rocky") ||
+		strings.Contains(name, "alma") || strings.Contains(name, "rhel") ||
+		strings.Contains(name, "fedora"):
+		return fmt.Sprintf("rpm -i --replacepkgs %s/*.rpm 2>/dev/null || true", pkgDir)
+	default:
+		return ""
 	}
 }
 

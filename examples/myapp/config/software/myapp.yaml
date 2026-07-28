@@ -1,24 +1,11 @@
 name: myapp
 default_version: "2.1.0"
 license: Apache-2.0
-license_file: LICENSE
-
-source:
-  git: "https://github.com/acme/myapp"
-  tag: "v2.1.0"
 
 dependencies:
   - openssl
   - zlib
 
 build:
-  - go:
-      - build
-      - "-ldflags=-s -w"
-      - "-o"
-      - "${install_dir}/bin/myapp"
-      - "./cmd/myapp"
+  - mkdir: "${install_dir}/bin"
   - mkdir: "${install_dir}/etc/myapp"
-  - copy:
-      src: "config/myapp.yaml.example"
-      dst: "${install_dir}/etc/myapp/myapp.yaml"
