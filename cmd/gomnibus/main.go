@@ -117,26 +117,24 @@ func runBuild(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	for _, node := range graph.Order() {
+	installDir := proj.InstallDir
+	if err := pipeline.Run(ctx, graph, cfg.Workers, func(ctx context.Context, node *pipeline.Node) error {
 		def := node.Def
-		logger.Info("processing", zap.String("software", def.Name), zap.String("version", def.ResolvedVersion))
+		logger.Info("processing",
+			zap.String("software", def.Name),
+			zap.String("version", def.ResolvedVersion),
+			zap.Int("level", node.Level),
+		)
 
 		srcDir := fmt.Sprintf("%s/src/%s-%s", cfg.BaseDir, def.Name, def.ResolvedVersion)
-		installDir := proj.InstallDir
 
-		cacheKey := ""
 		if def.Source != nil {
-			cacheKey, _ = cache.Key(def.Name, def.ResolvedVersion, "")
+			cacheKey, _ := cache.Key(def.Name, def.ResolvedVersion, "")
 			if hit, _ := buildCache.Has(ctx, cacheKey); hit {
-				logger.Info("cache hit", zap.String("key", cacheKey))
-				if err := buildCache.Restore(ctx, cacheKey, installDir); err != nil {
-					return err
-				}
-				continue
+				logger.Info("cache hit", zap.String("key", cacheKey), zap.String("software", def.Name))
+				return buildCache.Restore(ctx, cacheKey, installDir)
 			}
-		}
 
-		if def.Source != nil {
 			f, err := fetcher.For(def.Source)
 			if err != nil {
 				return err
@@ -157,9 +155,15 @@ func runBuild(cmd *cobra.Command, args []string) error {
 			return err
 		}
 
-		if cacheKey != "" {
-			_ = buildCache.Store(ctx, cacheKey, installDir)
+		if def.Source != nil {
+			cacheKey, _ := cache.Key(def.Name, def.ResolvedVersion, "")
+			if cacheKey != "" {
+				_ = buildCache.Store(ctx, cacheKey, installDir)
+			}
 		}
+		return nil
+	}); err != nil {
+		return err
 	}
 
 	if !skipHealth {

@@ -3,7 +3,10 @@
 package pipeline
 
 import (
+	"context"
 	"fmt"
+
+	"golang.org/x/sync/errgroup"
 
 	"github.com/syntaxroot-cc/gomnibus/internal/software"
 )
@@ -33,6 +36,7 @@ func Build(names []string, reg *software.Registry, overrides map[string]string) 
 	if err := g.topoSort(); err != nil {
 		return nil, err
 	}
+	g.assignLevels()
 	return g, nil
 }
 
@@ -101,4 +105,77 @@ func (g *Graph) topoSort() error {
 // Order returns nodes in dependency-first order.
 func (g *Graph) Order() []*Node {
 	return g.order
+}
+
+// assignLevels sets Node.Level = max(dep.Level)+1 for every node.
+// Because g.order is deps-first, iterating it in order guarantees every dep
+// already has its level assigned before we reach the node that depends on it.
+func (g *Graph) assignLevels() {
+	for _, n := range g.order {
+		n.Level = 0
+		for _, dep := range n.Deps {
+			if dep.Level+1 > n.Level {
+				n.Level = dep.Level + 1
+			}
+		}
+	}
+}
+
+// BuildFunc is the unit of work Run executes for each node.
+type BuildFunc func(ctx context.Context, node *Node) error
+
+// Run executes fn for every node in the graph, respecting dependency order and
+// running up to workers nodes concurrently.
+//
+// A node becomes eligible the instant all of its direct dependencies have
+// finished — not merely when its whole level is done — so the scheduler
+// extracts the maximum parallelism the DAG allows.
+//
+// If any node's fn returns an error the context is cancelled, in-flight nodes
+// drain, and the first error is returned.
+func Run(ctx context.Context, graph *Graph, workers int, fn BuildFunc) error {
+	if workers <= 0 {
+		workers = 1
+	}
+
+	// Each node gets a dedicated channel that is closed when the node is done.
+	// Dependent nodes block on these channels before acquiring a worker slot.
+	done := make(map[string]chan struct{}, len(graph.nodes))
+	for name := range graph.nodes {
+		done[name] = make(chan struct{})
+	}
+
+	sem := make(chan struct{}, workers)
+
+	g, ctx := errgroup.WithContext(ctx)
+
+	for _, n := range graph.order {
+		n := n // loop-variable capture
+		g.Go(func() error {
+			// Wait for every direct dependency to complete (or context cancel).
+			for _, dep := range n.Deps {
+				select {
+				case <-done[dep.Def.Name]:
+				case <-ctx.Done():
+					return ctx.Err()
+				}
+			}
+
+			// Acquire a worker slot.
+			select {
+			case sem <- struct{}{}:
+			case <-ctx.Done():
+				return ctx.Err()
+			}
+			defer func() { <-sem }()
+
+			err := fn(ctx, n)
+			if err == nil {
+				close(done[n.Def.Name])
+			}
+			return err
+		})
+	}
+
+	return g.Wait()
 }
