@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"path/filepath"
+	"strings"
 	"syscall"
 
 	"github.com/spf13/cobra"
@@ -126,7 +128,12 @@ func runBuild(cmd *cobra.Command, args []string) error {
 			zap.Int("level", node.Level),
 		)
 
-		srcDir := fmt.Sprintf("%s/src/%s-%s", cfg.BaseDir, def.Name, def.ResolvedVersion)
+		srcParent := filepath.Join(cfg.BaseDir, "src")
+		srcName := def.Name + "-" + def.ResolvedVersion
+		if def.RelativePath != "" {
+			srcName = def.RelativePath
+		}
+		srcDir := filepath.Join(srcParent, srcName)
 
 		if def.Source != nil {
 			cacheKey, _ := cache.Key(def.Name, def.ResolvedVersion, "")
@@ -140,8 +147,23 @@ func runBuild(cmd *cobra.Command, args []string) error {
 				return err
 			}
 			logger.Info("fetching", zap.String("fetcher", f.Name()), zap.String("software", def.Name))
-			if err := f.Fetch(ctx, def.Source, srcDir); err != nil {
+
+			// Archive sources (tar.gz etc.) are downloaded to a staging area then
+			// extracted into srcParent so the source tree lands at srcDir.
+			// Non-archive sources (git, path) clone/copy directly to srcDir.
+			isArchive := archiveURL(def.Source.URL)
+			fetchDest := srcDir
+			if isArchive {
+				fetchDest = filepath.Join(cfg.BaseDir, "downloads", def.Name+"-"+def.ResolvedVersion)
+			}
+			if err := f.Fetch(ctx, def.Source, fetchDest); err != nil {
 				return fmt.Errorf("fetch %s: %w", def.Name, err)
+			}
+			if isArchive {
+				archive := filepath.Join(fetchDest, filepath.Base(def.Source.URL))
+				if err := cache.Untar(archive, srcParent); err != nil {
+					return fmt.Errorf("extract %s: %w", def.Name, err)
+				}
 			}
 		}
 
@@ -227,6 +249,13 @@ func runBuild(cmd *cobra.Command, args []string) error {
 
 	logger.Info("build complete", zap.String("project", projName))
 	return nil
+}
+
+// archiveURL returns true when the URL points to a supported archive format
+// that must be extracted after download (.tar.gz, .tgz, .tar.bz2).
+func archiveURL(u string) bool {
+	base := filepath.Base(u)
+	return strings.HasSuffix(base, ".tar.gz") || strings.HasSuffix(base, ".tgz") || strings.HasSuffix(base, ".tar.bz2")
 }
 
 // buildCacheFromConfig constructs the appropriate Cache implementation based on

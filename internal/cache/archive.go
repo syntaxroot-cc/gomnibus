@@ -75,7 +75,7 @@ func untar(srcTar, destDir string) error {
 			if err := os.MkdirAll(filepath.Dir(target), 0o755); err != nil {
 				return err
 			}
-			out, err := os.Create(target)
+			out, err := os.OpenFile(target, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, hdr.FileInfo().Mode())
 			if err != nil {
 				return err
 			}
@@ -84,7 +84,13 @@ func untar(srcTar, destDir string) error {
 				return err
 			}
 			out.Close()
+		case tar.TypeSymlink:
+			_ = os.Symlink(hdr.Linkname, target)
 		}
 	}
 	return nil
 }
+
+// Untar extracts a gzipped tar archive into destDir.
+func Untar(srcTar, destDir string) error { return untar(srcTar, destDir) }
+
