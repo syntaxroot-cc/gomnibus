@@ -93,4 +93,3 @@ func untar(srcTar, destDir string) error {
 
 // Untar extracts a gzipped tar archive into destDir.
 func Untar(srcTar, destDir string) error { return untar(srcTar, destDir) }
-
