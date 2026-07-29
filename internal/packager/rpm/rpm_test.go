@@ -170,13 +170,9 @@ func TestPack_Integration(t *testing.T) {
 		t.Skip("rpmbuild not available")
 	}
 
+	// installDir IS proj.InstallDir — mirroring production (Pack is always called with proj.InstallDir).
 	installDir := t.TempDir()
-	// Create directory structure mirroring InstallDir so rpmbuild %files resolves.
-	subDir := filepath.Join(installDir, "opt", "myapp")
-	if err := os.MkdirAll(subDir, 0o755); err != nil {
-		t.Fatal(err)
-	}
-	writeFile(t, filepath.Join(subDir, "bin", "myapp"), "#!/bin/sh\necho hello\n")
+	writeFile(t, filepath.Join(installDir, "bin", "myapp"), "#!/bin/sh\necho hello\n")
 
 	outputDir := t.TempDir()
 	proj := &project.Definition{
@@ -186,7 +182,7 @@ func TestPack_Integration(t *testing.T) {
 		Description:    "Integration test package",
 		License:        "MIT",
 		Homepage:       "https://example.com",
-		InstallDir:     "/opt/myapp",
+		InstallDir:     installDir,
 	}
 
 	paths, err := (&RPMPackager{}).Pack(context.Background(), proj, installDir, outputDir)
@@ -212,17 +208,14 @@ func TestPack_Integration_CreatesOutputDir(t *testing.T) {
 	}
 
 	installDir := t.TempDir()
-	subDir := filepath.Join(installDir, "opt", "tool")
-	if err := os.MkdirAll(subDir, 0o755); err != nil {
-		t.Fatal(err)
-	}
+	writeFile(t, filepath.Join(installDir, "bin", "tool"), "#!/bin/sh\necho hello\n")
 
 	outputDir := filepath.Join(t.TempDir(), "new", "rpm", "output")
 	proj := &project.Definition{
 		Name:         "tool",
 		BuildVersion: "1.0.0",
 		License:      "MIT",
-		InstallDir:   "/opt/tool",
+		InstallDir:   installDir,
 	}
 
 	if _, err := (&RPMPackager{}).Pack(context.Background(), proj, installDir, outputDir); err != nil {
