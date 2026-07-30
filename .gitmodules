@@ -1,0 +1,3 @@
+[submodule "vendor/gomnibus-software"]
+	path = vendor/gomnibus-software
+	url = https://github.com/syntaxroot-cc/gomnibus-software
