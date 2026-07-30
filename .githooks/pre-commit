@@ -1,0 +1,14 @@
+#!/bin/sh
+# Run gofmt on staged .go files; abort commit if any need reformatting.
+files=$(git diff --cached --name-only --diff-filter=ACM | grep '\.go$')
+[ -z "$files" ] && exit 0
+
+unformatted=$(gofmt -l $files)
+[ -z "$unformatted" ] && exit 0
+
+echo "gofmt: the following files need formatting:"
+for f in $unformatted; do
+    echo "  $f"
+done
+echo "Run: gofmt -w $unformatted"
+exit 1

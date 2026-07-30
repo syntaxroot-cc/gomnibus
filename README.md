@@ -177,8 +177,13 @@ Flags:
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). The Claude Code configuration in `.claude/`
-contains agents, skills, and prompts to help implement new features.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for dev setup, the git hooks, and code conventions. After cloning, enable the pre-commit hook with:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+The Claude Code configuration in `.claude/` contains agents, skills, and prompts to help implement new features.
 
 ---
 
