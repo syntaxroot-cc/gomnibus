@@ -47,21 +47,21 @@ func runStep(ctx context.Context, step software.BuildStep, bc *Context) error {
 		return runShell(ctx, expandVars(step.Command, bc), workDir, env)
 
 	case step.Make != nil:
-		return runCmd(ctx, workDir, env, "make", step.Make...)
+		return runCmd(ctx, workDir, env, "make", expandSlice(step.Make, bc)...)
 
 	case step.CMake != nil:
-		args := append([]string{"-DCMAKE_INSTALL_PREFIX=" + bc.InstallDir}, step.CMake...)
+		args := append([]string{"-DCMAKE_INSTALL_PREFIX=" + bc.InstallDir}, expandSlice(step.CMake, bc)...)
 		return runCmd(ctx, workDir, env, "cmake", args...)
 
 	case step.Configure != nil:
-		args := append([]string{"--prefix=" + bc.InstallDir}, step.Configure...)
+		args := append([]string{"--prefix=" + bc.InstallDir}, expandSlice(step.Configure, bc)...)
 		return runCmd(ctx, workDir, env, "./configure", args...)
 
 	case step.Go != nil:
-		return runCmd(ctx, workDir, env, "go", step.Go...)
+		return runCmd(ctx, workDir, env, "go", expandSlice(step.Go, bc)...)
 
 	case step.Gem != nil:
-		return runCmd(ctx, workDir, env, "gem", step.Gem...)
+		return runCmd(ctx, workDir, env, "gem", expandSlice(step.Gem, bc)...)
 
 	case step.Mkdir != "":
 		return os.MkdirAll(expandPath(step.Mkdir, bc), 0o755)
@@ -128,6 +128,17 @@ func expandVars(s string, bc *Context) string {
 	s = strings.ReplaceAll(s, "${src_dir}", bc.SrcDir)
 	s = strings.ReplaceAll(s, "${build_dir}", bc.BuildDir)
 	return s
+}
+
+func expandSlice(args []string, bc *Context) []string {
+	if len(args) == 0 {
+		return args
+	}
+	expanded := make([]string, len(args))
+	for i, a := range args {
+		expanded[i] = expandVars(a, bc)
+	}
+	return expanded
 }
 
 func copyFile(src, dst string) error {

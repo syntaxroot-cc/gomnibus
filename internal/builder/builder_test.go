@@ -3,6 +3,7 @@ package builder
 import (
 	"context"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -301,5 +302,88 @@ func TestExecute_NoBuildSteps(t *testing.T) {
 	def := &software.Definition{Name: "noop"}
 	if err := Execute(context.Background(), def, bc); err != nil {
 		t.Errorf("empty build should be a no-op, got: %v", err)
+	}
+}
+
+// ── expandSlice ───────────────────────────────────────────────────────────────
+
+func TestExpandSlice(t *testing.T) {
+	bc := &Context{SrcDir: "/src", BuildDir: "/build", InstallDir: "/install"}
+	in := []string{"--with-foo=${install_dir}", "--src=${src_dir}", "--plain"}
+	got := expandSlice(in, bc)
+	want := []string{"--with-foo=/install", "--src=/src", "--plain"}
+	for i, w := range want {
+		if got[i] != w {
+			t.Errorf("[%d]: got %q, want %q", i, got[i], w)
+		}
+	}
+}
+
+func TestExpandSlice_Nil(t *testing.T) {
+	bc := &Context{SrcDir: "/src", BuildDir: "/build", InstallDir: "/install"}
+	if got := expandSlice(nil, bc); got != nil {
+		t.Errorf("nil input should return nil, got %v", got)
+	}
+}
+
+func TestExpandSlice_Empty(t *testing.T) {
+	bc := &Context{SrcDir: "/src", BuildDir: "/build", InstallDir: "/install"}
+	got := expandSlice([]string{}, bc)
+	if len(got) != 0 {
+		t.Errorf("empty input should return empty slice, got %v", got)
+	}
+}
+
+// ── var expansion in configure / make steps ───────────────────────────────────
+
+func TestExecute_Configure_ExpandsVarsInArgs(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("requires sh")
+	}
+	bc := testCtx(t)
+	argsFile := filepath.Join(bc.InstallDir, "configure-args.txt")
+	// Fake ./configure script that writes its received args to a file.
+	script := "#!/bin/sh\necho \"$@\" > " + argsFile + "\n"
+	if err := os.WriteFile(filepath.Join(bc.SrcDir, "configure"), []byte(script), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	def := &software.Definition{
+		Name:  "test",
+		Build: []software.BuildStep{{Configure: []string{"--with-ssl=${install_dir}"}}},
+	}
+	if err := Execute(context.Background(), def, bc); err != nil {
+		t.Fatalf("Configure step: %v", err)
+	}
+	got, err := os.ReadFile(argsFile)
+	if err != nil {
+		t.Fatalf("reading args file: %v", err)
+	}
+	if !strings.Contains(string(got), bc.InstallDir) {
+		t.Errorf("${install_dir} not expanded in configure arg; got: %q", string(got))
+	}
+}
+
+func TestExecute_Make_ExpandsVarsInArgs(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("requires make")
+	}
+	if _, err := exec.LookPath("make"); err != nil {
+		t.Skip("make not available")
+	}
+	bc := testCtx(t)
+	// Minimal Makefile: install target creates PREFIX/lib using the PREFIX arg.
+	makefile := "install:\n\tmkdir -p $(PREFIX)/lib\n"
+	if err := os.WriteFile(filepath.Join(bc.SrcDir, "Makefile"), []byte(makefile), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	def := &software.Definition{
+		Name:  "test",
+		Build: []software.BuildStep{{Make: []string{"install", "PREFIX=${install_dir}"}}},
+	}
+	if err := Execute(context.Background(), def, bc); err != nil {
+		t.Fatalf("Make step: %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(bc.InstallDir, "lib")); err != nil {
+		t.Error("make install with expanded PREFIX did not create lib dir")
 	}
 }

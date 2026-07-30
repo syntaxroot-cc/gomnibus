@@ -62,18 +62,18 @@ gomnibus manifest myapp           # print JSON version manifest
 
 ## Software library (gomnibus-software)
 
-`vendor/gomnibus-software` is a git submodule pointing to
+`lib/gomnibus-software` is a git submodule pointing to
 [syntaxroot-cc/gomnibus-software](https://github.com/syntaxroot-cc/gomnibus-software),
 a curated library of reusable YAML definitions (zlib, openssl, curl, libffi, etc.).
 
-To use it in a project, list `config/software` **before** the vendor path in `gomnibus.yaml`
+To use it in a project, list `config/software` **before** the library path in `gomnibus.yaml`
 so that project-local definitions take precedence over the library (first-found wins in the registry):
 
 ```yaml
 # gomnibus.yaml
 software_dirs:
   - config/software
-  - ../../vendor/gomnibus-software/config/software
+  - ../../lib/gomnibus-software/config/software
 ```
 
 After cloning gomnibus, initialize the submodule:
