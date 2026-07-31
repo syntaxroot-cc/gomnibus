@@ -83,7 +83,7 @@ func (c *S3Cache) Restore(ctx context.Context, key, destDir string) error {
 	if err != nil {
 		return err
 	}
-	defer os.Remove(tmp.Name())
+	defer func() { _ = os.Remove(tmp.Name()) }()
 	defer tmp.Close()
 
 	if _, err := io.Copy(tmp, out.Body); err != nil {
@@ -104,7 +104,7 @@ func (c *S3Cache) Store(ctx context.Context, key, srcDir string) error {
 	if err != nil {
 		return err
 	}
-	defer os.Remove(tmp.Name())
+	defer func() { _ = os.Remove(tmp.Name()) }()
 	defer tmp.Close()
 
 	if err := archiveDir(srcDir, tmp.Name()); err != nil {
