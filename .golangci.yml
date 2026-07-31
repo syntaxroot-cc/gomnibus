@@ -17,7 +17,6 @@ linters:
         - (io.Closer).Close
         - (*os.File).Close
 
-issues:
   exclusions:
     rules:
       # nolint directives on weak crypto in net fetcher are intentional (hash verification only).
