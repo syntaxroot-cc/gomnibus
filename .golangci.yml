@@ -8,7 +8,6 @@ linters:
     - unused
     - ineffassign
     - misspell
-    - gofmt
 
   settings:
     errcheck:
@@ -28,3 +27,7 @@ linters:
       - path: _test\.go
         text: "os.Chdir"
         linters: [forbidigo]
+
+formatters:
+  enable:
+    - gofmt
