@@ -8,16 +8,24 @@ import (
 	"path/filepath"
 )
 
-func archiveDir(srcDir, destTar string) error {
+func archiveDir(srcDir, destTar string) (retErr error) {
 	f, err := os.Create(destTar)
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 	gw := gzip.NewWriter(f)
-	defer gw.Close()
+	defer func() {
+		if cerr := gw.Close(); cerr != nil && retErr == nil {
+			retErr = cerr
+		}
+	}()
 	tw := tar.NewWriter(gw)
-	defer tw.Close()
+	defer func() {
+		if cerr := tw.Close(); cerr != nil && retErr == nil {
+			retErr = cerr
+		}
+	}()
 
 	return filepath.Walk(srcDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -55,7 +63,7 @@ func untar(srcTar, destDir string) error {
 	if err != nil {
 		return err
 	}
-	defer gr.Close()
+	defer func() { _ = gr.Close() }()
 	tr := tar.NewReader(gr)
 	for {
 		hdr, err := tr.Next()

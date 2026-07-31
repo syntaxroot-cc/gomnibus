@@ -27,7 +27,7 @@ func (d *DebPackager) Pack(ctx context.Context, proj *project.Definition, instal
 	if err != nil {
 		return nil, err
 	}
-	defer os.RemoveAll(stagingDir)
+	defer func() { _ = os.RemoveAll(stagingDir) }()
 
 	// Mirror install tree into staging.
 	installStage := filepath.Join(stagingDir, filepath.Clean(proj.InstallDir))

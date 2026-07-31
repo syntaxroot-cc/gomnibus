@@ -79,7 +79,7 @@ func (n *NetFetcher) Fetch(ctx context.Context, src *software.Source, destDir st
 	if h != nil {
 		got := hex.EncodeToString(h.Sum(nil))
 		if got != expected {
-			os.Remove(dest)
+			_ = os.Remove(dest)
 			return fmt.Errorf("checksum mismatch for %s: got %s, want %s", filename, got, expected)
 		}
 	}

@@ -90,14 +90,14 @@ func (f *S3Fetcher) Fetch(ctx context.Context, src *software.Source, destDir str
 	_, copyErr := io.Copy(w, out.Body)
 	f2.Close()
 	if copyErr != nil {
-		os.Remove(dest)
+		_ = os.Remove(dest)
 		return fmt.Errorf("streaming s3://%s/%s: %w", src.S3Bucket, src.S3Key, copyErr)
 	}
 
 	if h != nil {
 		got := hex.EncodeToString(h.Sum(nil))
 		if got != expected {
-			os.Remove(dest)
+			_ = os.Remove(dest)
 			return fmt.Errorf("checksum mismatch for %s: got %s, want %s", src.S3Key, got, expected)
 		}
 	}

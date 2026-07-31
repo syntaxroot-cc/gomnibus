@@ -45,7 +45,7 @@ func (p *PkgPackager) Pack(ctx context.Context, proj *project.Definition, instal
 	if err != nil {
 		return nil, err
 	}
-	defer os.RemoveAll(stagingDir)
+	defer func() { _ = os.RemoveAll(stagingDir) }()
 
 	if err := os.MkdirAll(outputDir, 0o755); err != nil {
 		return nil, err

@@ -22,7 +22,7 @@ type TarPackager struct{}
 
 func (t *TarPackager) Name() string { return "tar" }
 
-func (t *TarPackager) Pack(_ context.Context, proj *project.Definition, installDir, outputDir string) ([]string, error) {
+func (t *TarPackager) Pack(_ context.Context, proj *project.Definition, installDir, outputDir string) (_ []string, retErr error) {
 	if err := os.MkdirAll(outputDir, 0o755); err != nil {
 		return nil, err
 	}
@@ -36,9 +36,17 @@ func (t *TarPackager) Pack(_ context.Context, proj *project.Definition, installD
 	defer f.Close()
 
 	gw := gzip.NewWriter(f)
-	defer gw.Close()
+	defer func() {
+		if cerr := gw.Close(); cerr != nil && retErr == nil {
+			retErr = cerr
+		}
+	}()
 	tw := tar.NewWriter(gw)
-	defer tw.Close()
+	defer func() {
+		if cerr := tw.Close(); cerr != nil && retErr == nil {
+			retErr = cerr
+		}
+	}()
 
 	err = filepath.Walk(installDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {

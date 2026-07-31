@@ -28,7 +28,7 @@ func (r *RPMPackager) Pack(ctx context.Context, proj *project.Definition, instal
 	if err != nil {
 		return nil, err
 	}
-	defer os.RemoveAll(rpmBase)
+	defer func() { _ = os.RemoveAll(rpmBase) }()
 
 	for _, d := range []string{"BUILD", "RPMS", "SOURCES", "SPECS", "SRPMS"} {
 		if err := os.MkdirAll(filepath.Join(rpmBase, d), 0o755); err != nil {

@@ -87,7 +87,7 @@ func TestPack_ValidGzip(t *testing.T) {
 	if err != nil {
 		t.Fatalf("not a valid gzip file: %v", err)
 	}
-	gr.Close()
+	_ = gr.Close()
 }
 
 func TestPack_CreatesOutputDir(t *testing.T) {
@@ -151,7 +151,7 @@ func listTarEntries(t *testing.T, path string) []string {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer gr.Close()
+	defer func() { _ = gr.Close() }()
 
 	tr := tar.NewReader(gr)
 	var entries []string

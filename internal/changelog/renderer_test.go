@@ -140,7 +140,7 @@ func TestRender_MultipleVersions(t *testing.T) {
 	if unrelIdx == -1 || v110Idx == -1 || v100Idx == -1 {
 		t.Fatalf("missing expected sections in:\n%s", out)
 	}
-	if !(unrelIdx < v110Idx && v110Idx < v100Idx) {
+	if unrelIdx >= v110Idx || v110Idx >= v100Idx {
 		t.Error("sections out of order: expected Unreleased > v1.1.0 > v1.0.0 (newest first)")
 	}
 }

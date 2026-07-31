@@ -27,7 +27,7 @@ type Cache interface {
 // content hash of its definition file.
 func Key(name, version, defPath string) (string, error) {
 	h := sha256.New()
-	fmt.Fprintf(h, "%s:%s:", name, version)
+	_, _ = fmt.Fprintf(h, "%s:%s:", name, version)
 	if f, err := os.Open(defPath); err == nil {
 		defer f.Close()
 		_, _ = io.Copy(h, f)

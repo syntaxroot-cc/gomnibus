@@ -194,7 +194,7 @@ func wixID(s string) string {
 // is required for correct Windows Installer upgrade behaviour.
 func deterministicGUID(rel string) string {
 	h := sha1.New() //nolint:gosec
-	fmt.Fprint(h, "gomnibus:"+rel)
+	_, _ = fmt.Fprint(h, "gomnibus:"+rel)
 	b := h.Sum(nil)
 	// Format as uppercase GUID: {XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX}
 	return fmt.Sprintf("{%X-%X-%X-%X-%X}",
