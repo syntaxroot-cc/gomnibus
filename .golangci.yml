@@ -1,3 +1,5 @@
+version: "2"
+
 linters:
   enable:
     - errcheck
@@ -8,21 +10,22 @@ linters:
     - misspell
     - gofmt
 
-linters-settings:
-  errcheck:
-    # Ignore error returns from defer/Close — common and intentional in this codebase.
-    exclude-functions:
-      - (io.Closer).Close
-      - (*os.File).Close
+  settings:
+    errcheck:
+      # Ignore error returns from defer/Close — common and intentional in this codebase.
+      exclude-functions:
+        - (io.Closer).Close
+        - (*os.File).Close
 
 issues:
-  exclude-rules:
-    # nolint directives on weak crypto in net fetcher are intentional (hash verification only).
-    - path: internal/fetcher/net/net_test\.go
-      linters: [gosec]
-    - path: internal/fetcher/net/net\.go
-      linters: [gosec]
-    # Test helpers use os.Chdir — acceptable in tests.
-    - path: _test\.go
-      text: "os.Chdir"
-      linters: [forbidigo]
+  exclusions:
+    rules:
+      # nolint directives on weak crypto in net fetcher are intentional (hash verification only).
+      - path: internal/fetcher/net/net_test\.go
+        linters: [gosec]
+      - path: internal/fetcher/net/net\.go
+        linters: [gosec]
+      # Test helpers use os.Chdir — acceptable in tests.
+      - path: _test\.go
+        text: "os.Chdir"
+        linters: [forbidigo]
