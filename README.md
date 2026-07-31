@@ -5,8 +5,11 @@
 
 [![CI](https://github.com/syntaxroot-cc/gomnibus/actions/workflows/ci.yml/badge.svg)](https://github.com/syntaxroot-cc/gomnibus/actions/workflows/ci.yml)
 [![Kitchen](https://github.com/syntaxroot-cc/gomnibus/actions/workflows/kitchen.yml/badge.svg)](https://github.com/syntaxroot-cc/gomnibus/actions/workflows/kitchen.yml)
-[![Go](https://img.shields.io/badge/go-1.26+-00ADD8?logo=go)](https://go.dev)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
+[![codecov](https://codecov.io/gh/syntaxroot-cc/gomnibus/branch/main/graph/badge.svg)](https://codecov.io/gh/syntaxroot-cc/gomnibus)
+[![Go Report Card](https://goreportcard.com/badge/github.com/syntaxroot-cc/gomnibus)](https://goreportcard.com/report/github.com/syntaxroot-cc/gomnibus)
+[![Go version](https://img.shields.io/github/go-mod/go-version/syntaxroot-cc/gomnibus?logo=go)](go.mod)
+[![Release](https://img.shields.io/github/v/release/syntaxroot-cc/gomnibus?include_prereleases)](https://github.com/syntaxroot-cc/gomnibus/releases)
+[![License](https://img.shields.io/github/license/syntaxroot-cc/gomnibus)](LICENSE)
 
 gomnibus produces cross-platform packages (`.deb`, `.rpm`, `.pkg`, `.msi`,
 `.tar.gz`) that embed an application together with all its runtime dependencies.
