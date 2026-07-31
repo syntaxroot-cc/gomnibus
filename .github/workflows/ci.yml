@@ -84,6 +84,7 @@ jobs:
         with:
           version: latest
           args: --timeout=5m
+          install-mode: goinstall
 
       - name: govulncheck
         run: |
@@ -118,7 +119,8 @@ jobs:
         run: CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o /tmp/gomnibus-linux-arm64 ./cmd/gomnibus
 
       - name: Validate example project
-        run: ./gomnibus validate myapp --config examples/myapp/gomnibus.yaml
+        working-directory: examples/myapp
+        run: ../../gomnibus validate myapp
 
   release:
     name: Release
