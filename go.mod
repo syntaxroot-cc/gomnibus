@@ -1,6 +1,6 @@
 module github.com/syntaxroot-cc/gomnibus
 
-go 1.26
+go 1.26.0
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.41.5
@@ -11,7 +11,7 @@ require (
 	github.com/go-git/go-git/v5 v5.19.1
 	github.com/spf13/cobra v1.8.1
 	go.uber.org/zap v1.27.0
-	golang.org/x/sync v0.10.0
+	golang.org/x/sync v0.24.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
